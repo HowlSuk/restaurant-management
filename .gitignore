@@ -1,0 +1,30 @@
+# =========================
+# System files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Dependencies (if added later)
+# =========================
+node_modules/
+vendor/
+
+# =========================
+# Environment / config files (IMPORTANT)
+# =========================
+.env
+config.php
+backend/config.php
+backend/config/config.php
+
+# =========================
+# Cache / temp files
+# =========================
+cache/
+tmp/

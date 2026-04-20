@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menu - Le Gourmet</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="navbar" id="navbar"></header>
+
+    <main class="container">
+        <div class="row-between">
+            <h1 class="page-title">Our Menu</h1>
+            <div id="cart-info" class="muted"></div>
+        </div>
+
+        <div id="filters" class="mt-2"></div>
+
+        <div id="plats" class="grid mt-3"></div>
+
+        <section id="cart-section" class="mt-3 hidden">
+            <h2>Your order</h2>
+            <table class="table">
+                <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th></th></tr></thead>
+                <tbody id="cart-body"></tbody>
+            </table>
+            <div class="row-between mt-2">
+                <strong>Total: <span id="cart-total">0.00</span> €</strong>
+                <button id="place-order" class="btn">Place order</button>
+            </div>
+            <div id="order-alert" class="mt-2"></div>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        auth.renderNavbar();
+
+        const user = api.user.get();
+        let plats = [];
+        let categories = [];
+        let currentCategory = 'all';
+        const cart = new Map(); // plat_id -> { plat, qty }
+
+        async function load() {
+            [plats, categories] = await Promise.all([
+                api.get('/plats', { auth: false }).then(r => r.data),
+                api.get('/categories', { auth: false }).then(r => r.data),
+            ]);
+            renderFilters();
+            renderPlats();
+        }
+
+        function renderFilters() {
+            const f = document.getElementById('filters');
+            const btns = [['all', 'All'], ...categories.map(c => [String(c.id), c.name])];
+            f.innerHTML = btns.map(([id, name]) =>
+                `<button class="btn ${currentCategory === id ? '' : 'btn-secondary'} btn-sm" data-cat="${id}" style="margin-right:6px;margin-bottom:6px;">${name}</button>`
+            ).join('');
+            f.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+                currentCategory = b.dataset.cat;
+                renderFilters();
+                renderPlats();
+            }));
+        }
+
+        function renderPlats() {
+            const el = document.getElementById('plats');
+            const filtered = currentCategory === 'all'
+                ? plats
+                : plats.filter(p => String(p.category_id) === currentCategory);
+            if (!filtered.length) { el.innerHTML = '<p class="muted">No dishes in this category.</p>'; return; }
+            el.innerHTML = filtered.map(p => `
+                <div class="card">
+                    <h3>${p.name}</h3>
+                    <div class="muted">${p.category_name || ''}</div>
+                    <p>${p.description || ''}</p>
+                    <div class="price">${Number(p.price).toFixed(2)} €</div>
+                    ${user ? `<button class="btn btn-sm mt-2" data-add="${p.id}">Add to order</button>` : ''}
+                </div>
+            `).join('');
+            el.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+                const plat = plats.find(x => String(x.id) === b.dataset.add);
+                addToCart(plat);
+            }));
+        }
+
+        function addToCart(plat) {
+            const cur = cart.get(plat.id);
+            cart.set(plat.id, { plat, qty: cur ? cur.qty + 1 : 1 });
+            renderCart();
+        }
+
+        function renderCart() {
+            const section = document.getElementById('cart-section');
+            if (!cart.size) { section.classList.add('hidden'); return; }
+            section.classList.remove('hidden');
+
+            const body = document.getElementById('cart-body');
+            let total = 0;
+            body.innerHTML = [...cart.values()].map(({ plat, qty }) => {
+                const line = Number(plat.price) * qty;
+                total += line;
+                return `
+                    <tr>
+                        <td>${plat.name}</td>
+                        <td>${qty}</td>
+                        <td>${line.toFixed(2)} €</td>
+                        <td><button class="btn btn-sm btn-danger" data-remove="${plat.id}">Remove</button></td>
+                    </tr>`;
+            }).join('');
+            document.getElementById('cart-total').textContent = total.toFixed(2);
+
+            body.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
+                cart.delete(Number(b.dataset.remove));
+                renderCart();
+            }));
+        }
+
+        document.getElementById('place-order').addEventListener('click', async () => {
+            const alertEl = document.getElementById('order-alert');
+            alertEl.innerHTML = '';
+            if (!user) { alertEl.innerHTML = '<div class="alert error">Please <a href="login.html">log in</a> to order.</div>'; return; }
+            try {
+                const items = [...cart.values()].map(({ plat, qty }) => ({ plat_id: plat.id, quantity: qty }));
+                const r = await api.post('/commandes', { items });
+                alertEl.innerHTML = `<div class="alert success">Order #${r.data.id} placed! See it in <a href="orders.html">Orders</a>.</div>`;
+                cart.clear();
+                renderCart();
+            } catch (err) {
+                alertEl.innerHTML = `<div class="alert error">${err.message}</div>`;
+            }
+        });
+
+        load().catch(err => document.getElementById('plats').innerHTML = `<div class="alert error">${err.message}</div>`);
+    </script>
+</body>
+</html>

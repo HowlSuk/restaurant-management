@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reviews - Le Gourmet</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="navbar" id="navbar"></header>
+
+    <main class="container">
+        <h1 class="page-title">Reviews</h1>
+
+        <section class="card" id="form-card">
+            <h3>Leave a review</h3>
+            <div id="alert"></div>
+            <form id="review-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select id="note" required>
+                            <option value="5">★★★★★ (5)</option>
+                            <option value="4">★★★★ (4)</option>
+                            <option value="3">★★★ (3)</option>
+                            <option value="2">★★ (2)</option>
+                            <option value="1">★ (1)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Comment</label>
+                    <textarea id="comment" placeholder="How was your experience?"></textarea>
+                </div>
+                <button class="btn" type="submit">Submit review</button>
+            </form>
+        </section>
+
+        <section class="mt-3">
+            <h3>All reviews</h3>
+            <div id="reviews" class="grid"></div>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        auth.renderNavbar();
+
+        const user = api.user.get();
+        if (!user) document.getElementById('form-card').innerHTML =
+            '<p>Please <a href="login.html">log in</a> to leave a review.</p>';
+
+        async function loadReviews() {
+            const el = document.getElementById('reviews');
+            try {
+                const r = await api.get('/avis', { auth: false });
+                const rows = r.data || [];
+                if (!rows.length) { el.innerHTML = '<p class="muted">No reviews yet.</p>'; return; }
+                el.innerHTML = rows.map(a => `
+                    <div class="card">
+                        <div class="stars">${'★'.repeat(a.note)}${'☆'.repeat(5 - a.note)}</div>
+                        <p>${(a.comment || '').replace(/</g, '&lt;')}</p>
+                        <div class="muted">— ${a.user_name} · ${a.created_at}</div>
+                    </div>
+                `).join('');
+            } catch (err) { el.innerHTML = `<div class="alert error">${err.message}</div>`; }
+        }
+
+        const form = document.getElementById('review-form');
+        if (form) form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('alert');
+            alertBox.innerHTML = '';
+            if (!user) { alertBox.innerHTML = '<div class="alert error">Please log in.</div>'; return; }
+            try {
+                await api.post('/avis', {
+                    note:    Number(document.getElementById('note').value),
+                    comment: document.getElementById('comment').value,
+                });
+                alertBox.innerHTML = '<div class="alert success">Thanks for your review!</div>';
+                e.target.reset();
+                loadReviews();
+            } catch (err) {
+                alertBox.innerHTML = `<div class="alert error">${err.message}</div>`;
+            }
+        });
+
+        loadReviews();
+    </script>
+</body>
+</html>

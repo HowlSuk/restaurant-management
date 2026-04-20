@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Forward the original Authorization header to PHP (some Apache setups strip it).
+RewriteCond %{HTTP:Authorization} .+
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Route every request through index.php, unless it's an existing file/dir.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

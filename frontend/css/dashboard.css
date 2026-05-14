@@ -1,0 +1,298 @@
+/* =========================
+   DASHBOARD STYLES
+========================= */
+
+:root{
+    --primary:#d62828;
+    --primary-dark:#b71c1c;
+    --secondary:#fcbf49;
+    --bg:#f5f7fb;
+    --white:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+
+    --success-bg:#dcfce7;
+    --success-text:#166534;
+
+    --warning-bg:#fef3c7;
+    --warning-text:#92400e;
+
+    --danger-bg:#fee2e2;
+    --danger-text:#991b1b;
+
+    --shadow:0 10px 30px rgba(0,0,0,0.08);
+    --radius:18px;
+}
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#f8fafc,#eef2ff);
+    color:var(--text);
+    min-height:100vh;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar{
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(12px);
+    padding:18px 40px;
+    box-shadow:0 2px 20px rgba(0,0,0,0.05);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container{
+    max-width:1300px;
+    margin:auto;
+    padding:50px 20px;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.page-title{
+    font-size:42px;
+    font-weight:700;
+    color:var(--primary);
+    margin-bottom:35px;
+}
+
+/* =========================
+   GRID SUMMARY
+========================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card{
+    background:var(--white);
+    border-radius:var(--radius);
+    padding:30px;
+    box-shadow:var(--shadow);
+    transition:0.3s ease;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:5px;
+    background:linear-gradient(90deg,var(--primary),var(--secondary));
+}
+
+.card:hover{
+    transform:translateY(-6px);
+}
+
+.card h3{
+    font-size:18px;
+    color:var(--muted);
+    margin-bottom:12px;
+}
+
+.price{
+    font-size:42px;
+    font-weight:700;
+    color:var(--primary);
+    text-transform:capitalize;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+section{
+    margin-top:45px;
+}
+
+section h2{
+    font-size:28px;
+    margin-bottom:20px;
+    color:var(--text);
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--white);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+}
+
+.table thead{
+    background:var(--primary);
+    color:white;
+}
+
+.table th{
+    padding:18px;
+    text-align:left;
+    font-size:15px;
+}
+
+.table td{
+    padding:18px;
+    border-bottom:1px solid #f1f1f1;
+}
+
+.table tbody tr{
+    transition:0.2s;
+}
+
+.table tbody tr:hover{
+    background:#fafafa;
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.badge{
+    padding:7px 14px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:700;
+    text-transform:capitalize;
+    display:inline-block;
+}
+
+/* success */
+
+.badge.confirmed,
+.badge.completed,
+.badge.approved{
+    background:var(--success-bg);
+    color:var(--success-text);
+}
+
+/* pending */
+
+.badge.pending{
+    background:var(--warning-bg);
+    color:var(--warning-text);
+}
+
+/* rejected/cancelled */
+
+.badge.rejected,
+.badge.cancelled,
+.badge.failed{
+    background:var(--danger-bg);
+    color:var(--danger-text);
+}
+
+/* =========================
+   MUTED TEXT
+========================= */
+
+.muted{
+    color:var(--muted);
+    background:var(--white);
+    padding:25px;
+    border-radius:14px;
+    box-shadow:var(--shadow);
+}
+
+/* =========================
+   UTILITIES
+========================= */
+
+.mt-3{
+    margin-top:30px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+    .container{
+        padding:30px 15px;
+    }
+
+    .page-title{
+        font-size:32px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        padding:24px;
+    }
+
+    .price{
+        font-size:34px;
+    }
+
+    .table{
+        display:block;
+        overflow-x:auto;
+    }
+
+    .navbar{
+        padding:15px 20px;
+    }
+}
+
+.navbar {
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+}
+.navbar .brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+.navbar nav a {
+    color: #fff;
+    margin-left: 18px;
+    font-weight: 500;
+    opacity: 0.9;
+    text-decoration: none;
+}
+.navbar nav a:hover { opacity: 1; text-decoration: none; }
+.navbar .user-info { font-size: 14px; opacity: 0.9; margin-left: 18px; }

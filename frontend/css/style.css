@@ -195,8 +195,8 @@ a:hover { text-decoration: underline; }
     color: #374151;
 }
 .badge.pending    { background: #fef3c7; color: #92400e; }
-.badge.confirmed, .badge.paid, .badge.completed, .badge.served { background: #dcfce7; color: #166534; }
-.badge.cancelled, .badge.failed, .badge.closed { background: #fee2e2; color: #991b1b; }
+.badge.confirmed, .badge.paid, .badge.completed, .badge.served, .badge.approved { background: #dcfce7; color: #166534; }
+.badge.cancelled, .badge.failed, .badge.closed, .badge.rejected { background: #fee2e2; color: #991b1b; }
 .badge.preparing  { background: #dbeafe; color: #1e40af; }
 
 /* ---------- Utilities ---------- */

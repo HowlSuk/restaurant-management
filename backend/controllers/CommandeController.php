@@ -14,7 +14,7 @@ class CommandeController extends Controller
         $user  = $ctx['user'] ?? null;
         $model = new Commande();
         if ($user && $user['role'] === 'admin') {
-            Response::success($model->all());
+            Response::success($model->allWithCustomer());
         }
         Response::success($model->allForUser((int) ($user['sub'] ?? 0)));
     }

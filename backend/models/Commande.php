@@ -30,4 +30,15 @@ class Commande extends Model
         $stmt->execute([':uid' => $userId]);
         return $stmt->fetchAll();
     }
+
+    public function allWithCustomer(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT c.*, u.name AS customer_name, u.email AS customer_email
+               FROM {$this->table} c
+               JOIN users u ON u.id = c.user_id
+              ORDER BY c.id DESC"
+        );
+        return $stmt->fetchAll();
+    }
 }

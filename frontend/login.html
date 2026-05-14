@@ -46,7 +46,7 @@
                 }, { auth: false });
                 api.token.set(r.data.token);
                 api.user.set(r.data.user);
-                window.location.href = 'dashboard.html';
+                window.location.href = auth.getDashboardUrl(r.data.user.role);
             } catch (err) {
                 alertBox.innerHTML = `<div class="alert error">${err.message}</div>`;
             }

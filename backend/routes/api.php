@@ -18,8 +18,15 @@ use App\Controllers\MessageController;
 use App\Controllers\ReclamationController;
 use App\Controllers\ContactController;
 use App\Controllers\AvisController;
+use App\Controllers\ChefScheduleController;
+use App\Controllers\EmployeeScheduleController;
+use App\Controllers\LeaveRequestController;
+use App\Controllers\StaffController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\AdminMiddleware;
+use App\Middleware\ChefMiddleware;
+use App\Middleware\EmployeeMiddleware;
+use App\Middleware\StaffMiddleware;
 
 /** @var Router $router */
 $router = new Router();
@@ -114,5 +121,35 @@ $router->delete('/api/order-items/{id}', [OrderItemController::class, 'destroy']
 $router->get   ('/api/contacts',      [ContactController::class, 'index'],   [AdminMiddleware::class]);
 $router->get   ('/api/contacts/{id}', [ContactController::class, 'show'],    [AdminMiddleware::class]);
 $router->delete('/api/contacts/{id}', [ContactController::class, 'destroy'], [AdminMiddleware::class]);
+
+// ---------- Staff module ----------
+
+// Chef schedules - chef can view own, admin can CRUD
+$router->get   ('/api/chef-schedules',      [ChefScheduleController::class, 'index'],   [AuthMiddleware::class]);
+$router->get   ('/api/chef-schedules/{id}', [ChefScheduleController::class, 'show'],    [AdminMiddleware::class]);
+$router->post  ('/api/chef-schedules',      [ChefScheduleController::class, 'store'],   [AdminMiddleware::class]);
+$router->put   ('/api/chef-schedules/{id}', [ChefScheduleController::class, 'update'],  [AdminMiddleware::class]);
+$router->delete('/api/chef-schedules/{id}', [ChefScheduleController::class, 'destroy'], [AdminMiddleware::class]);
+
+// Employee schedules - employee can view own, admin can CRUD
+$router->get   ('/api/employee-schedules',      [EmployeeScheduleController::class, 'index'],   [AuthMiddleware::class]);
+$router->get   ('/api/employee-schedules/{id}', [EmployeeScheduleController::class, 'show'],    [AdminMiddleware::class]);
+$router->post  ('/api/employee-schedules',      [EmployeeScheduleController::class, 'store'],   [AdminMiddleware::class]);
+$router->put   ('/api/employee-schedules/{id}', [EmployeeScheduleController::class, 'update'],  [AdminMiddleware::class]);
+$router->delete('/api/employee-schedules/{id}', [EmployeeScheduleController::class, 'destroy'], [AdminMiddleware::class]);
+
+// Leave requests - staff can create/view own, admin can manage all
+$router->get   ('/api/leave-requests',      [LeaveRequestController::class, 'index'],   [AuthMiddleware::class]);
+$router->get   ('/api/leave-requests/{id}', [LeaveRequestController::class, 'show'],    [AuthMiddleware::class]);
+$router->post  ('/api/leave-requests',      [LeaveRequestController::class, 'store'],   [StaffMiddleware::class]);
+$router->put   ('/api/leave-requests/{id}', [LeaveRequestController::class, 'update'],  [AdminMiddleware::class]);
+$router->delete('/api/leave-requests/{id}', [LeaveRequestController::class, 'destroy'], [AdminMiddleware::class]);
+
+// Staff management (admin only)
+$router->get   ('/api/staff',      [StaffController::class, 'index'],   [AdminMiddleware::class]);
+$router->post  ('/api/staff',      [StaffController::class, 'store'],   [AdminMiddleware::class]);
+$router->get   ('/api/staff/{id}', [StaffController::class, 'show'],    [AdminMiddleware::class]);
+$router->put   ('/api/staff/{id}', [StaffController::class, 'update'],  [AdminMiddleware::class]);
+$router->delete('/api/staff/{id}', [StaffController::class, 'destroy'], [AdminMiddleware::class]);
 
 return $router;

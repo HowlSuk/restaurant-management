@@ -144,8 +144,9 @@
         const rows = (await api.get('/commandes')).data;
         renderTable('orders-list', rows, [
             { key: 'id', label: 'ID' },
+            { key: 'customer_name', label: 'Customer' },
+            { key: 'customer_email', label: 'Email' },
             { key: 'date', label: 'Date' },
-            { key: 'user_id', label: 'User ID' },
             { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
         ], [
             { name: 'served', label: 'Mark served', handler: async r => { await api.put('/commandes/' + r.id, { status: 'served' }); loadOrders(); } },
@@ -163,10 +164,11 @@
         const rows = (await api.get('/reservations')).data;
         renderTable('reservations-list', rows, [
             { key: 'id', label: 'ID' },
+            { key: 'customer_name', label: 'Customer' },
+            { key: 'customer_email', label: 'Email' },
             { key: 'date', label: 'Date' },
             { key: 'time', label: 'Time' },
             { key: 'number_of_people', label: 'People' },
-            { key: 'table_id', label: 'Table' },
             { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
         ], [
             { name: 'confirm', label: 'Confirm', handler: async r => { await api.put('/reservations/' + r.id, { status: 'confirmed' }); loadReservations(); } },
@@ -237,6 +239,141 @@
         ]);
     }
 
+    // ---------- Staff Management ----------
+    async function loadStaff() {
+        const rows = (await api.get('/staff')).data;
+        renderTable('staff-list', rows, [
+            { key: 'id', label: 'ID' },
+            { key: 'name', label: 'Name' },
+            { key: 'email', label: 'Email' },
+            { key: 'role', label: 'Role', render: r => `<span class="badge">${r.role}</span>` },
+        ], [
+            { name: 'toggle', label: 'Toggle Role', handler: async r => {
+                await api.put('/staff/' + r.id, { role: r.role === 'chef' ? 'employee' : 'chef' });
+                loadStaff(); loadChefSelects(); loadEmpSelects();
+            } },
+            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
+                if (!confirm('Delete staff member?')) return;
+                await api.del('/staff/' + r.id);
+                loadStaff();
+            } },
+        ]);
+    }
+    document.getElementById('staff-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        await api.post('/staff', {
+            name:     document.getElementById('s-name').value,
+            email:    document.getElementById('s-email').value,
+            password: document.getElementById('s-pass').value,
+            role:     document.getElementById('s-role').value,
+        });
+        e.target.reset();
+        loadStaff();
+        loadChefSelects();
+        loadEmpSelects();
+    });
+
+    // ---------- Chef Schedules ----------
+    async function loadChefSelects() {
+        const staff = (await api.get('/staff')).data || [];
+        const chefs = staff.filter(s => s.role === 'chef');
+        document.getElementById('cs-chef').innerHTML =
+            '<option value="">-- select chef --</option>' +
+            chefs.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+    }
+    async function loadChefSchedules() {
+        const rows = (await api.get('/chef-schedules')).data;
+        renderTable('cs-list', rows, [
+            { key: 'id', label: 'ID' },
+            { key: 'chef_name', label: 'Chef' },
+            { key: 'working_date', label: 'Date' },
+            { key: 'shift_start', label: 'Start' },
+            { key: 'shift_end', label: 'End' },
+        ], [
+            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
+                if (!confirm('Delete schedule?')) return;
+                await api.del('/chef-schedules/' + r.id);
+                loadChefSchedules();
+            } },
+        ]);
+    }
+    document.getElementById('cs-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        await api.post('/chef-schedules', {
+            chef_id:      Number(document.getElementById('cs-chef').value),
+            working_date: document.getElementById('cs-date').value,
+            shift_start:  document.getElementById('cs-start').value,
+            shift_end:    document.getElementById('cs-end').value,
+        });
+        e.target.reset();
+        loadChefSchedules();
+    });
+
+    // ---------- Employee Schedules ----------
+    async function loadEmpSelects() {
+        const staff = (await api.get('/staff')).data || [];
+        const emps = staff.filter(s => s.role === 'employee');
+        document.getElementById('es-emp').innerHTML =
+            '<option value="">-- select employee --</option>' +
+            emps.map(e => `<option value="${e.id}">${esc(e.name)}</option>`).join('');
+    }
+    async function loadEmpSchedules() {
+        const rows = (await api.get('/employee-schedules')).data;
+        renderTable('es-list', rows, [
+            { key: 'id', label: 'ID' },
+            { key: 'employee_name', label: 'Employee' },
+            { key: 'working_date', label: 'Date' },
+            { key: 'shift_start', label: 'Start' },
+            { key: 'shift_end', label: 'End' },
+            { key: 'role_task', label: 'Task' },
+        ], [
+            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
+                if (!confirm('Delete schedule?')) return;
+                await api.del('/employee-schedules/' + r.id);
+                loadEmpSchedules();
+            } },
+        ]);
+    }
+    document.getElementById('es-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        await api.post('/employee-schedules', {
+            employee_id:  Number(document.getElementById('es-emp').value),
+            working_date: document.getElementById('es-date').value,
+            shift_start:  document.getElementById('es-start').value,
+            shift_end:    document.getElementById('es-end').value,
+            role_task:    document.getElementById('es-task').value || null,
+        });
+        e.target.reset();
+        loadEmpSchedules();
+    });
+
+    // ---------- Leave Requests ----------
+    async function loadLeaveRequests() {
+        const rows = (await api.get('/leave-requests')).data;
+        renderTable('lr-list', rows, [
+            { key: 'id', label: 'ID' },
+            { key: 'staff_name', label: 'Staff' },
+            { key: 'staff_role', label: 'Role' },
+            { key: 'start_date', label: 'Start' },
+            { key: 'end_date', label: 'End' },
+            { key: 'reason', label: 'Reason' },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+        ], [
+            { name: 'approve', label: 'Approve', handler: async r => {
+                await api.put('/leave-requests/' + r.id, { status: 'approved' });
+                loadLeaveRequests();
+            } },
+            { name: 'reject', label: 'Reject', class: 'btn-danger', handler: async r => {
+                await api.put('/leave-requests/' + r.id, { status: 'rejected' });
+                loadLeaveRequests();
+            } },
+        ]);
+    }
+
+    // ---------- Updated Orders (with customer details) ----------
+
+    // ---------- Updated Reservations (with customer details) ----------
+
     // initial load
     loadPlats();
     loadCats();
@@ -247,4 +384,10 @@
     loadPayments();
     loadContacts();
     loadReclamations();
+    loadStaff();
+    loadChefSelects();
+    loadEmpSelects();
+    loadChefSchedules();
+    loadEmpSchedules();
+    loadLeaveRequests();
 })();

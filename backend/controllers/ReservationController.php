@@ -12,7 +12,7 @@ class ReservationController extends Controller
         $user  = $ctx['user'] ?? null;
         $model = new Reservation();
         if ($user && $user['role'] === 'admin') {
-            Response::success($model->all());
+            Response::success($model->allWithCustomer());
         }
         Response::success($model->allForUser((int) ($user['sub'] ?? 0)));
     }

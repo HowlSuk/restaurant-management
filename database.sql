@@ -17,7 +17,7 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role ENUM('admin','client') NOT NULL DEFAULT 'client',
+    role ENUM('admin','client','chef','employee') NOT NULL DEFAULT 'client',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -144,6 +144,48 @@ CREATE TABLE avis (
     user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- -----------------------------------------------------
+-- 13. chef_schedule
+-- -----------------------------------------------------
+CREATE TABLE chef_schedule (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    chef_id INT NOT NULL,
+    working_date DATE NOT NULL,
+    shift_start TIME NOT NULL,
+    shift_end TIME NOT NULL,
+    FOREIGN KEY (chef_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_chef_date (chef_id, working_date)
+) ENGINE=InnoDB;
+
+-- -----------------------------------------------------
+-- 14. employee_schedule
+-- -----------------------------------------------------
+CREATE TABLE employee_schedule (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    working_date DATE NOT NULL,
+    shift_start TIME NOT NULL,
+    shift_end TIME NOT NULL,
+    role_task VARCHAR(255) DEFAULT NULL,
+    FOREIGN KEY (employee_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_employee_date (employee_id, working_date)
+) ENGINE=InnoDB;
+
+-- -----------------------------------------------------
+-- 15. leave_requests
+-- -----------------------------------------------------
+CREATE TABLE leave_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    staff_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason TEXT,
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (staff_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_staff_status (staff_id, status)
 ) ENGINE=InnoDB;
 
 -- =====================================================

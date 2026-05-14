@@ -1,0 +1,27 @@
+<?php
+/**
+ * Application configuration.
+ *
+ * Copy this file to config.php and adjust values for your environment:
+ *   cp config.php.example config.php
+ */
+return [
+    'db' => [
+        'host'    => '127.0.0.1',
+        'port'    => 3306,
+        'name'    => 'restaurant_db',
+        'user'    => 'root',
+        'pass'    => '',           // default XAMPP/Laragon: empty
+        'charset' => 'utf8mb4',
+    ],
+
+    'jwt' => [
+        'secret' => 'CHANGE_ME_to_a_random_string',   // openssl rand -hex 32
+        'ttl'    => 86400,                             // token lifetime in seconds (1 day)
+        'issuer' => 'restaurant-management',
+    ],
+
+    'cors' => [
+        'allow_origin' => '*',   // restrict to your frontend origin in production
+    ],
+];

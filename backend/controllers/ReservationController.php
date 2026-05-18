@@ -25,20 +25,34 @@ class ReservationController extends Controller
     }
 
     public function store(array $params, array $ctx): void
-    {
-        $data   = $this->input();
-        $errors = $this->validate($data, [
-            'date'             => 'required',
-            'time'             => 'required',
-            'number_of_people' => 'required|integer',
-        ]);
-        if ($errors) Response::error('Validation failed', 422, $errors);
+{
+    $data   = $this->input();
 
-        $data['user_id'] = (int) ($ctx['user']['sub'] ?? 0);
-        $data['status']  = $data['status'] ?? 'pending';
-        $id = (new Reservation())->create($data);
-        Response::success(['id' => $id], 'Reservation created', 201);
+    $errors = $this->validate($data, [
+        'date'             => 'required',
+        'time'             => 'required',
+        'number_of_people' => 'required|integer',
+    ]);
+
+    if ($errors) {
+        Response::error('Validation failed', 422, $errors);
     }
+
+    
+    $reservationDateTime = new \DateTime($data['date'] . ' ' . $data['time']);
+    $now = new \DateTime();
+
+    if ($reservationDateTime < $now) {
+        Response::error("You cannot book a past date/time", 400);
+    }
+
+    $data['user_id'] = (int) ($ctx['user']['sub'] ?? 0);
+    $data['status']  = $data['status'] ?? 'pending';
+
+    $id = (new Reservation())->create($data);
+
+    Response::success(['id' => $id], 'Reservation created', 201);
+}
 
     public function update(array $params): void
     {

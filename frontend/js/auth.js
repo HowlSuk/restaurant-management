@@ -47,7 +47,7 @@
             }
 
             if (user.role === 'admin') {
-                links.push(['admin.html', 'Admin Panel']);
+                links.push(['admin.html', ' Admin Panel ']);
             }
         } else {
             links.push(['index.html',        'Home']);

@@ -45,6 +45,7 @@ class CommandeController extends Controller
         $platM     = new Plat();
 
         $commandeId = $commandes->create([
+            'date'    => date('Y-m-d H:i:s')
             'status'  => 'pending',
             'user_id' => (int) ($ctx['user']['sub'] ?? 0),
         ]);

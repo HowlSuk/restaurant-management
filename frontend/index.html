@@ -38,7 +38,7 @@
                     <div class="card">
                         <div class="stars">${'★'.repeat(a.note)}${'☆'.repeat(5 - a.note)}</div>
                         <p>${a.comment ? a.comment.replace(/</g,'&lt;') : ''}</p>
-                        <div class="muted">— ${a.user_name}</div>
+                        <div class="muted">— ${(a.user_name || '').replace(/</g, '&lt;')}</div>
                     </div>
                 `).join('');
             })

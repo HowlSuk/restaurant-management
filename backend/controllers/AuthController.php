@@ -9,29 +9,46 @@ use App\Models\User;
 class AuthController extends Controller
 {
     public function register(): void
-    {
-        $data   = $this->input();
-        $errors = $this->validate($data, [
-            'name'     => 'required',
-            'email'    => 'required|email',
-            'password' => 'required|min:6',
-        ]);
-        if ($errors) Response::error('Validation failed', 422, $errors);
+{
+    $data = $this->input();
 
-        $users = new User();
-        if ($users->findByEmail($data['email'])) {
-            Response::error('Email is already registered', 409);
-        }
+    //(i Added 'max' and stronger requirements)
+    $errors = $this->validate($data, [
+        'name'     => 'required|min:2|max:50',
+        'email'    => 'required|email',
+        'password' => 'required|min:8', 
+    ]);
 
-        $id = $users->create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => password_hash($data['password'], PASSWORD_BCRYPT),
-            'role'     => ($data['role'] ?? 'client') === 'admin' ? 'client' : 'client', // clients only via public route
-        ]);
+    if ($errors) Response::error('Validation failed', 422, $errors);
 
-        Response::success(['id' => $id], 'User registered successfully', 201);
+    
+    $cleanName  = htmlspecialchars(trim($data['name']));
+    $cleanEmail = filter_var(trim($data['email']), FILTER_SANITIZE_EMAIL);
+
+    $users = new User();
+    
+    
+    if ($users->findByEmail($cleanEmail)) {
+        Response::error('Email is already registered', 409);
     }
+
+    
+    $options = ['cost' => 12];
+    $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT, $options);
+
+    $id = $users->create([
+        'name'     => $cleanName,
+        'email'    => $cleanEmail,
+        'password' => $hashedPassword,
+        'role'     => 'client', 
+    ]);
+
+    if (!$id) {
+        Response::error('Registration failed', 500);
+    }
+
+    Response::success(['id' => $id], 'User registered successfully', 201);
+}
 
     public function login(): void
     {

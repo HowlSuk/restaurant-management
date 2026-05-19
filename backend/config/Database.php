@@ -4,6 +4,8 @@ namespace App\Config;
 use PDO;
 use PDOException;
 
+/*Its job is to manage the connection 
+so i don't accidentally open a hundred connections at once, which would crash my local server.*/
 class Database
 {
     private static ?PDO $pdo = null;
@@ -33,3 +35,14 @@ class Database
         return self::$pdo;
     }
 }
+
+/*The DSN: 
+--It builds a Data Source Name, which is just a formatted string like 
+  "mysql:host=127.0.0.1;dbname=restaurant_db"
+
+The Singleton Pattern: 
+--the if (self::$pdo === null). This is a smart trick. It checks: "Am I already connected?" * If No: It creates a new connection using PDO (PHP Data Objects).
+  If Yes: It just hands you the existing connection. This saves memory and speed. */
+
+
+/*The config/ folder acts as a centralized settings hub that allows you to change global variables (like database passwords or security keys) */

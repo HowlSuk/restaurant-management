@@ -49,6 +49,7 @@ class AuthController extends Controller
             Response::error('Invalid email or password', 401);
         }
 
+        //if user is valid, create a JWT token (a digital pass) that contains the user's ID, name, email, and role. This token is signed with a secret key from the config, so it can't be tampered with. The token also has an expiration time (TTL) to enhance security.
         $cfg = require __DIR__ . '/../config/config.php';
         $token = JWT::encode([
             'sub'   => (int) $user['id'],

@@ -2,7 +2,45 @@
     /* =========================
        CHEF DASHBOARD
     ========================= */
+:root{
+    --primary:#d62828;
+    --primary-dark:#b71c1c;
+    --secondary:#fcbf49;
+    --bg:#f5f7fb;
+    --white:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --shadow:0 8px 25px rgba(0,0,0,0.08);
+    --radius:14px;
+}
 
+
+    .navbar {
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+}
+.navbar .brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+.navbar nav a {
+    color: #fff;
+    margin-left: 18px;
+    font-weight: 500;
+    opacity: 0.9;
+    text-decoration: none;
+}
+.navbar nav a:hover { opacity: 1; text-decoration: none; }
+.navbar .user-info { font-size: 14px; opacity: 0.9; margin-left: 18px; }
     .tabs{
         display:flex;
         gap:12px;
@@ -33,7 +71,7 @@
     }
 
     .tab.active{
-        background:#d62828;
+        background:#f0a6a6;
         color:white;
         box-shadow:0 4px 12px rgba(214,40,40,0.3);
     }
@@ -290,28 +328,11 @@
             font-size:32px;
         }
     }
-
-
-    .navbar {
-    background: var(--primary);
-    color: #fff;
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: var(--shadow);
+#welcome{
+    margin-top: 15px;
 }
-.navbar .brand {
-    font-size: 20px;
-    font-weight: 700;
-    color: #fff;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
-.navbar nav a {
-    color: #fff;
-    margin-left: 18px;
-    font-weight: 500;
-    opacity: 0.9;
-    text-decoration: none;
-}
-.navbar nav a:hover { opacity: 1; text-decoration: none; }
-.navbar .user-info { font-size: 14px; opacity: 0.9; margin-left: 18px; }

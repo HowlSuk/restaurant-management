@@ -28,7 +28,14 @@
     --shadow:0 10px 30px rgba(0,0,0,0.08);
     --radius:18px;
 }
-
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+#welcome{
+    margin-top: 15px;
+}
 /* =========================
    GLOBAL
 ========================= */

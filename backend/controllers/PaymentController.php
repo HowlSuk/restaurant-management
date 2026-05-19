@@ -27,7 +27,14 @@ class PaymentController extends Controller
             'method'      => 'required',
             'commande_id' => 'required|integer',
         ]);
+
+        // 1. Check if the total is below zero during creation
+        if (isset($data['total']) && (float)$data['total'] < 0) {
+            $errors['total'] = ['Payment total cannot be below zero.'];
+        }
+
         if ($errors) Response::error('Validation failed', 422, $errors);
+        
         $data['status'] = $data['status'] ?? 'pending';
         $id = (new Payment())->create($data);
         Response::success(['id' => $id], 'Payment created', 201);

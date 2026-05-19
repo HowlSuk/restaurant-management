@@ -27,4 +27,4 @@ backend/config/config.php
 # Cache / temp files
 # =========================
 cache/
-tmp/
+tmp/.vscode/launch.json

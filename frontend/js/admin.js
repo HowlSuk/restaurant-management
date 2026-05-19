@@ -178,33 +178,63 @@
 
     // ---------- Payments ----------
     async function loadPayments() {
-        const rows = (await api.get('/payments')).data;
-        renderTable('payments-list', rows, [
-            { key: 'id', label: 'ID' },
-            { key: 'commande_id', label: 'Order' },
-            { key: 'total', label: 'Total', render: r => Number(r.total).toFixed(2) + ' €' },
-            { key: 'method', label: 'Method' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
-        ], [
-            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
-                if (!confirm('Delete payment?')) return;
-                await api.del('/payments/' + r.id);
-                loadPayments();
-            } },
-        ]);
-    }
-    document.getElementById('pay-form').addEventListener('submit', async e => {
-        e.preventDefault();
-        await api.post('/payments', {
+    const rows = (await api.get('/payments')).data;
+    renderTable('payments-list', rows, [
+        { key: 'id', label: 'ID' },
+        { key: 'commande_id', label: 'Order' },
+        // Modified this line: It will now display the custom error message in the table row if data is corrupt
+        { 
+            key: 'total', 
+            label: 'Total', 
+            render: r => {
+                const amount = Number(r.total);
+                return amount < 0 ? '<span class="text-danger">Invalid Amount</span>' : amount.toFixed(2) + ' €';
+            } 
+        },
+        { key: 'method', label: 'Method' },
+        { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+    ], [
+        { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
+            if (!confirm('Delete payment?')) return;
+            await api.del('/payments/' + r.id);
+            loadPayments();
+        } },
+    ]);
+}
+
+document.getElementById('pay-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    
+    try {
+        // 1. Send the data to your PHP controller
+        const response = await api.post('/payments', {
             commande_id: Number(document.getElementById('pay-commande').value),
             total:       Number(document.getElementById('pay-total').value),
             method:      document.getElementById('pay-method').value,
             status:      document.getElementById('pay-status').value,
         });
+
+        // 2. If it succeeds, clear form and reload list
         e.target.reset();
         loadPayments();
-    });
 
+    } catch (error) {
+        // 3. Catch the 422 validation error sent by PHP
+        console.error("Payment failed:", error);
+        
+        // This digs into the exact structure sent back by Response::error()
+        const errorData = error.response?.data; 
+        
+        if (errorData && errorData.errors && errorData.errors.total) {
+            // Show the exact "Payment total cannot be below zero." message from PHP
+            alert(errorData.errors.total[0]); 
+        } else if (errorData && errorData.message) {
+            alert(errorData.message);
+        } else {
+            alert("Total cannot be below zero.");
+        }
+    }
+});
     // ---------- Contacts ----------
     async function loadContacts() {
         const rows = (await api.get('/contacts')).data;

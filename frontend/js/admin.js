@@ -120,24 +120,45 @@
 
     // ---------- Users ----------
     async function loadUsers() {
-        const rows = (await api.get('/users')).data;
-        renderTable('users-list', rows, [
-            { key: 'id', label: 'ID' },
-            { key: 'name', label: 'Name' },
-            { key: 'email', label: 'Email' },
-            { key: 'role', label: 'Role' },
-        ], [
-            { name: 'promote', label: 'Toggle admin', handler: async r => {
-                await api.put('/users/' + r.id, { role: r.role === 'admin' ? 'client' : 'admin' });
+    const rows = (await api.get('/users')).data;
+    renderTable('users-list', rows, [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'role', label: 'Role' },
+    ], [
+        { 
+            name: 'cycle-role', 
+            label: 'Change Role', 
+            class: 'btn-info',
+            handler: async r => {
+                // Define the rotation sequence
+                const roleRotation = {
+                    'client': 'employee',
+                    'employee': 'chef',
+                    'chef': 'admin',
+                    'admin': 'client'
+                };
+                
+                // Fallback to client if the current role is undefined/unexpected
+                const nextRole = roleRotation[r.role] || 'client'; 
+                
+                await api.put('/users/' + r.id, { role: nextRole });
                 loadUsers();
-            } },
-            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
+            } 
+        },
+        { 
+            name: 'del', 
+            label: 'Delete', 
+            class: 'btn-danger', 
+            handler: async r => {
                 if (!confirm('Delete user?')) return;
                 await api.del('/users/' + r.id);
                 loadUsers();
-            } },
-        ]);
-    }
+            } 
+        },
+    ]);
+}
 
     // ---------- Orders ----------
     async function loadOrders() {

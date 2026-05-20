@@ -190,7 +190,7 @@
             { key: 'date', label: 'Date' },
             { key: 'time', label: 'Time' },
             { key: 'number_of_people', label: 'People' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
         ], [
             { name: 'confirm', label: 'Confirm', handler: async r => { await api.put('/reservations/' + r.id, { status: 'confirmed' }); loadReservations(); } },
             { name: 'cancel', label: 'Cancel', class: 'btn-danger', handler: async r => { await api.put('/reservations/' + r.id, { status: 'cancelled' }); loadReservations(); } },
@@ -199,6 +199,7 @@
 
     // ---------- Payments ----------
     async function loadPayments() {
+
     const rows = (await api.get('/payments')).data;
     renderTable('payments-list', rows, [
         { key: 'id', label: 'ID' },
@@ -213,7 +214,7 @@
             } 
         },
         { key: 'method', label: 'Method' },
-        { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+        { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
     ], [
         { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
             if (!confirm('Delete payment?')) return;
@@ -229,6 +230,7 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
     try {
         // 1. Send the data to your PHP controller
         const response = await api.post('/payments', {
+
             commande_id: Number(document.getElementById('pay-commande').value),
             total:       Number(document.getElementById('pay-total').value),
             method:      document.getElementById('pay-method').value,
@@ -271,8 +273,26 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
             } },
         ]);
     }
+  
 
-   
+    // ---------- Reclamations ----------
+    async function loadReclamations() {
+        const rows = (await api.get('/reclamations')).data;
+        renderTable('reclamations-list', rows, [
+            { key: 'id', label: 'ID' },
+            { key: 'user_id', label: 'User' },
+            { key: 'content', label: 'Content' },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
+        ], [
+            { name: 'close', label: 'Close', handler: async r => { await api.put('/reclamations/' + r.id, { status: 'closed' }); loadReclamations(); } },
+            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
+                if (!confirm('Delete?')) return;
+                await api.del('/reclamations/' + r.id);
+                loadReclamations();
+            } },
+        ]);
+    }
+
     // ---------- Staff Management ----------
     async function loadStaff() {
         const rows = (await api.get('/staff')).data;
@@ -280,7 +300,7 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
             { key: 'id', label: 'ID' },
             { key: 'name', label: 'Name' },
             { key: 'email', label: 'Email' },
-            { key: 'role', label: 'Role', render: r => `<span class="badge">${r.role}</span>` },
+            { key: 'role', label: 'Role', render: r => `<span class="badge">${esc(r.role)}</span>` },
         ], [
             { name: 'toggle', label: 'Toggle Role', handler: async r => {
                 await api.put('/staff/' + r.id, { role: r.role === 'chef' ? 'employee' : 'chef' });
@@ -391,7 +411,7 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
             { key: 'start_date', label: 'Start' },
             { key: 'end_date', label: 'End' },
             { key: 'reason', label: 'Reason' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
         ], [
             { name: 'approve', label: 'Approve', handler: async r => {
                 await api.put('/leave-requests/' + r.id, { status: 'approved' });

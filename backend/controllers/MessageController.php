@@ -46,3 +46,4 @@ class MessageController extends Controller
         Response::success(null, 'Message deleted');
     }
 }
+  

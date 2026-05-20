@@ -272,24 +272,7 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
         ]);
     }
 
-    // ---------- Reclamations ----------
-    async function loadReclamations() {
-        const rows = (await api.get('/reclamations')).data;
-        renderTable('reclamations-list', rows, [
-            { key: 'id', label: 'ID' },
-            { key: 'user_id', label: 'User' },
-            { key: 'content', label: 'Content' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
-        ], [
-            { name: 'close', label: 'Close', handler: async r => { await api.put('/reclamations/' + r.id, { status: 'closed' }); loadReclamations(); } },
-            { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
-                if (!confirm('Delete?')) return;
-                await api.del('/reclamations/' + r.id);
-                loadReclamations();
-            } },
-        ]);
-    }
-
+   
     // ---------- Staff Management ----------
     async function loadStaff() {
         const rows = (await api.get('/staff')).data;
@@ -434,7 +417,6 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
     loadReservations();
     loadPayments();
     loadContacts();
-    loadReclamations();
     loadStaff();
     loadChefSelects();
     loadEmpSelects();

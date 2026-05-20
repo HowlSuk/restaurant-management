@@ -68,12 +68,7 @@ $router->get   ('/api/messages/{id}', [MessageController::class, 'show'],    [Au
 $router->put   ('/api/messages/{id}', [MessageController::class, 'update'],  [AuthMiddleware::class]);
 $router->delete('/api/messages/{id}', [MessageController::class, 'destroy'], [AuthMiddleware::class]);
 
-// Reclamations
-$router->get   ('/api/reclamations',      [ReclamationController::class, 'index'],   [AuthMiddleware::class]);
-$router->post  ('/api/reclamations',      [ReclamationController::class, 'store'],   [AuthMiddleware::class]);
-$router->get   ('/api/reclamations/{id}', [ReclamationController::class, 'show'],    [AuthMiddleware::class]);
-$router->put   ('/api/reclamations/{id}', [ReclamationController::class, 'update'],  [AuthMiddleware::class]);
-$router->delete('/api/reclamations/{id}', [ReclamationController::class, 'destroy'], [AuthMiddleware::class]);
+
 
 // Avis (reviews) - users can create/update their own
 $router->post  ('/api/avis',      [AvisController::class, 'store'],   [AuthMiddleware::class]);

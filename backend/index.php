@@ -47,7 +47,7 @@ spl_autoload_register(function (string $class): void {
 });
 
 // ---------------- Seed helper ----------------
-// Visit /backend/index.php?seed=1 once to (re)create the default admin account.
+// Visit /backend/index.php?seed=1 once to (re)create thessssss default admin account.
 if (isset($_GET['seed'])) {
     $db   = App\Config\Database::connect();
     $hash = password_hash('admin123', PASSWORD_BCRYPT);

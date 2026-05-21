@@ -62,17 +62,6 @@ CREATE TABLE message (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- 6. reclamation (complaints)
--- -----------------------------------------------------
-CREATE TABLE reclamation (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    content TEXT NOT NULL,
-    status ENUM('open','in_progress','closed') DEFAULT 'open',
-    user_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
 
 -- -----------------------------------------------------
 -- 7. commande (orders)

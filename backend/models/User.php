@@ -18,7 +18,7 @@ class User extends Model
 
     public function allSafe(): array
     {
-        $stmt = $this->db->query("SELECT id, name, email, role, created_at FROM {$this->table} ORDER BY id DESC");
+        $stmt = $this->db->query("SELECT id, name, email, role, created_at FROM {$this->table} ORDER BY id ASC");
         return $stmt->fetchAll();
     }
 }

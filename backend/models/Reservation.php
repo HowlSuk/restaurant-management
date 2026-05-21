@@ -16,13 +16,17 @@ class Reservation extends Model
     }
 
     public function allWithCustomer(): array
-    {
-        $stmt = $this->db->query(
-            "SELECT r.*, u.name AS customer_name, u.email AS customer_email
-               FROM {$this->table} r
-               JOIN users u ON u.id = r.user_id
-              ORDER BY r.id DESC"
-        );
-        return $stmt->fetchAll();
-    }
+{
+    $stmt = $this->db->query("
+        SELECT 
+            r.*,
+            u.name  AS customer_name,
+            u.email AS customer_email
+        FROM reservation r
+        JOIN users u ON u.id = r.user_id
+        ORDER BY r.id DESC
+    ");
+
+    return $stmt->fetchAll();
+}
 }

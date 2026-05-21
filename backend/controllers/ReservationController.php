@@ -8,14 +8,17 @@ use App\Models\Reservation;
 class ReservationController extends Controller
 {
     public function index(array $params, array $ctx): void
-    {
-        $user  = $ctx['user'] ?? null;
-        $model = new Reservation();
-        if ($user && $user['role'] === 'admin') {
-            Response::success($model->allWithCustomer());
-        }
-        Response::success($model->allForUser((int) ($user['sub'] ?? 0)));
+{
+    $user  = $ctx['user'] ?? null;
+    $model = new Reservation();
+
+    if ($user && $user['role'] === 'admin') {
+        Response::success($model->allWithCustomer());
+        return;
     }
+
+    Response::success($model->allForUser((int) ($user['sub'] ?? 0)));
+}
 
     public function show(array $params): void
     {

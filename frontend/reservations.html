@@ -39,7 +39,7 @@
         </section>
 
         <section class="mt-3">
-            <h3>My reservations</h3>
+            <h3 style="margin-bottom:10px;">My reservations</h3>
             <div id="reservations"></div>
         </section>
     </main>
@@ -70,10 +70,28 @@
                     if (!rows.length) { el.innerHTML = '<p class="muted">No reservations yet.</p>'; return; }
                     el.innerHTML = `
                         <table class="table">
-                            <thead><tr><th>Date</th><th>Time</th><th>People</th><th>Table</th><th>Status</th><th></th></tr></thead>
+                            <thead>
+                                <tr>
+                                    ${user.role === 'admin'
+                                        ? `<th>Customer</th><th>Email</th>`
+                                        : ''
+                                    }
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>People</th>
+                                    <th>Table</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
                             <tbody>
                                 ${rows.map(r => `
                                     <tr>
+                                        ${user.role === 'admin'
+                                        ? `<td>${r.customer_name || '-'}</td>
+                                        <td>${r.customer_email || '-'}</td>`
+                                        : ''
+                                    }
                                         <td>${r.date}</td>
                                         <td>${r.time}</td>
                                         <td>${r.number_of_people}</td>

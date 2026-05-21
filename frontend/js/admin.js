@@ -98,7 +98,7 @@
         renderTable('tables-list', rows, [
             { key: 'number', label: 'Number' },
             { key: 'capacity', label: 'Capacity' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
         ], [
             { name: 'del', label: 'Delete', class: 'btn-danger', handler: async r => {
                 if (!confirm('Delete table?')) return;
@@ -168,7 +168,7 @@
             { key: 'customer_name', label: 'Customer' },
             { key: 'customer_email', label: 'Email' },
             { key: 'date', label: 'Date' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${r.status}">${r.status}</span>` },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
         ], [
             { name: 'served', label: 'Mark served', handler: async r => { await api.put('/commandes/' + r.id, { status: 'served' }); loadOrders(); } },
             { name: 'paid', label: 'Mark paid', handler: async r => { await api.put('/commandes/' + r.id, { status: 'paid' }); loadOrders(); } },

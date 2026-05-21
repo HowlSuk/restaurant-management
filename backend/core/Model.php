@@ -35,7 +35,18 @@ abstract class Model
 
     public function where(string $column, $value): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE {$column} = :v ORDER BY id DESC");
+        // ✅ allowlist: column must be a known field for this model
+        $allowed = !empty($this->fillable)
+            ? $this->fillable
+            : ['id', 'user_id', 'status', 'created_at']; // safe fallback
+
+        if (!in_array($column, $allowed, true)) {
+            throw new \InvalidArgumentException("Column '$column' is not allowed in where()");
+        }
+
+        $stmt = $this->db->prepare(
+            "SELECT * FROM {$this->table} WHERE {$column} = :v ORDER BY id DESC"
+        );
         $stmt->execute([':v' => $value]);
         return $stmt->fetchAll();
     }

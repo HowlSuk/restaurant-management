@@ -411,7 +411,7 @@ document.getElementById('pay-form').addEventListener('submit', async e => {
             { key: 'start_date', label: 'Start' },
             { key: 'end_date', label: 'End' },
             { key: 'reason', label: 'Reason' },
-            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` },
+            { key: 'status', label: 'Status', render: r => `<span class="badge ${esc(r.status)}">${esc(r.status)}</span>` }, //esc() turns <script> into &lt;script&gt;
         ], [
             { name: 'approve', label: 'Approve', handler: async r => {
                 await api.put('/leave-requests/' + r.id, { status: 'approved' });

@@ -17,59 +17,7 @@
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
-    <script>
-        const user = auth.requireAuth();
-        if (user) {
-            auth.renderNavbar();
+    <script src="js/orders.js"></script>
 
-            async function load() {
-                const el = document.getElementById('orders');
-                try {
-                    const r = await api.get('/commandes');
-                    const rows = r.data || [];
-                    if (!rows.length) { el.innerHTML = '<p class="muted">No orders yet. Visit the <a href="menu.html">menu</a>.</p>'; return; }
-
-                    const detailed = await Promise.all(rows.map(o => api.get('/commandes/' + o.id).then(r => r.data).catch(() => o)));
-
-                    el.innerHTML = detailed.map(o => {
-                        const total = (o.items || []).reduce((s, i) => s + Number(i.price) * Number(i.quantity), 0);
-                        return `
-                            <div class="card mt-2">
-                                <div class="row-between">
-                                    <strong>Order #${o.id}</strong>
-                                    <span class="badge ${o.status}">${o.status}</span>
-                                </div>
-                                <div class="muted">${o.date}</div>
-                                ${(o.items || []).length ? `
-                                    <table class="table mt-2">
-                                        <thead><tr><th>Dish</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
-                                        <tbody>
-                                            ${o.items.map(i => `
-                                                <tr>
-                                                    <td>${i.plat_name}</td>
-                                                    <td>${i.quantity}</td>
-                                                    <td>${Number(i.price).toFixed(2)} €</td>
-                                                    <td>${(Number(i.price) * Number(i.quantity)).toFixed(2)} €</td>
-                                                </tr>`).join('')}
-                                        </tbody>
-                                    </table>
-                                    <div class="row-between mt-2"><strong>Total:</strong><strong>${total.toFixed(2)} €</strong></div>` : ''}
-                                ${o.status === 'pending' ? `<button class="btn btn-sm btn-danger mt-2" data-cancel="${o.id}">Cancel</button>` : ''}
-                            </div>`;
-                    }).join('');
-
-                    el.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', async () => {
-                        if (!confirm('Cancel this order?')) return;
-                        await api.put('/commandes/' + b.dataset.cancel, { status: 'cancelled' });
-                        load();
-                    }));
-                } catch (err) {
-                    el.innerHTML = `<div class="alert error">${err.message}</div>`;
-                }
-            }
-
-            load();
-        }
-    </script>
 </body>
 </html>

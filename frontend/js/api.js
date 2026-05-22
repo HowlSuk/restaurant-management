@@ -4,13 +4,23 @@
     const USER_KEY  = 'rm_user';
 
     async function request(path, { method = 'GET', body = null, auth = true } = {}) {
-        const headers = { 'Content-Type': 'application/json' };
+        // 1. Detect if the body payload is form file data
+        const isFormData = body instanceof FormData;
+
+        // Only set Content-Type to JSON if we are NOT handling a file upload
+        const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
+
         if (auth) {
             const token = localStorage.getItem(TOKEN_KEY);
             if (token) headers['Authorization'] = 'Bearer ' + token;
         }
+
         const opts = { method, headers };
-        if (body !== null) opts.body = JSON.stringify(body);
+
+        // 2. Only stringify if it's regular object data, leave FormData untouched!
+        if (body !== null) {
+            opts.body = isFormData ? body : JSON.stringify(body);
+        }
 
         const res = await fetch(window.API_BASE + path, opts);
         const text = await res.text();

@@ -1,3 +1,5 @@
+#Clean REST API URLs: instead of this "index.php?route=plats" i have "/plates"
+
 RewriteEngine On
 
 # Forward the original Authorization header to PHP (some Apache setups strip it).

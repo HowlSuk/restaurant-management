@@ -55,18 +55,22 @@
             links.push(['reviews.html',      'Reviews']);
             links.push(['contact.html',      'Contact']);
         }
+        const backendUrl = window.API_BASE.replace('/api', '/'); 
+        const profilePic = user && user.profile_picture ? backendUrl + user.profile_picture : backendUrl + 'assets/uploads/default.png';
 
         el.innerHTML = `
             <a class="brand" href="${home}">🍽 Le Gourmet</a>
             <nav>
                 ${links.map(([href, label]) => `<a href="${href}">${label}</a>`).join('')}
                 ${user
-                    ? `<span class="user-info">${user.name} (${user.role})</span>
-                       <a href="#" id="logout-link">Logout</a>`
+                    ? `<div class="nav-profile">
+                           <img src="${profilePic}" class="nav-avatar" alt="Profile">
+                           <span class="user-info">${user.name}</span>
+                           <a href="#" id="logout-link">Logout</a>
+                       </div>`
                     : `<a href="login.html">Login</a><a href="register.html">Register</a>`}
             </nav>
         `;
-
         const lo = document.getElementById('logout-link');
         if (lo) lo.addEventListener('click', (e) => { e.preventDefault(); logout(); });
     }

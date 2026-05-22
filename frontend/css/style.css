@@ -14,6 +14,20 @@
     --radius: 10px;
     --shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
+.nav-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 15px;
+}
+
+.nav-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%; /* The circle magic */
+    object-fit: cover;  /* Ensures faces aren't stretched */
+    border: 2px solid #ddd;
+}
 
 * { box-sizing: border-box; }
 html, body {

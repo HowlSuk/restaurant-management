@@ -16,16 +16,23 @@
             <form id="register-form">
                 <div class="form-group">
                     <label for="name">Full name</label>
-                    <input type="text" id="name" required>
+                    <input type="text" id="name" name="name" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" required>
+                    <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password (min 8 chars)</label>
-                    <input type="password" id="password" minlength="8" required>
+                    <input type="password" id="password" name="password" minlength="8" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="profile_pic">Profile Picture</label>
+                    <input type="file" id="profile_pic" name="profile_picture" accept="image/png, image/jpeg, image/jpg, image/webp">
+                    <small class="muted" style="display: block; margin-top: 4px;">Max size: 2MB (JPG, PNG, WEBP)</small>
+                </div>
+
                 <button type="submit" class="btn btn-block">Register</button>
             </form>
             <p class="text-center mt-3 muted">

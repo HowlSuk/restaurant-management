@@ -22,6 +22,7 @@ class UserController extends Controller
 
     public function store(): void
     {
+        // If an admin creates a user from a panel using JSON parameters:
         $data   = $this->input();
         $errors = $this->validate($data, [
             'name'     => 'required',
@@ -37,6 +38,12 @@ class UserController extends Controller
         }
 
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        
+        // Ensure a fallback profile picture string is attached if not supplied through raw store array
+        if (!isset($data['profile_picture'])) {
+            $data['profile_picture'] = 'assets/uploads/default.png';
+        }
+
         $id = $users->create($data);
         Response::success(['id' => $id], 'User created', 201);
     }

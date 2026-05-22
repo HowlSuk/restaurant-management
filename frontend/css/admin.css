@@ -16,6 +16,28 @@
     --shadow:0 8px 25px rgba(0,0,0,0.08);
     --radius:14px;
 }
+
+/* Profile Picture Styles */
+.nav-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 15px;
+}
+
+.nav-avatar {
+    width: 35px;           /* Small size */
+    height: 35px;          /* Small size */
+    border-radius: 50%;    /* Makes it circular ⭕ */
+    object-fit: cover;     /* Prevents stretching */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.nav-avatar:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+}
     
 .navbar {
     background: var(--primary);

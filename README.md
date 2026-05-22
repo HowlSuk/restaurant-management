@@ -47,6 +47,16 @@ restaurant-management/
         ├── api.js                # fetch wrapper + token storage
         ├── auth.js               # navbar + guards
         └── admin.js              # admin-panel logic
+        ├── chef-dashboard.js     
+        ├── contact.js               
+        ├── dashboard.js           
+        └── employee-dashboard       
+        ├── menu.js             
+        ├── orders.js               
+        ├── register.js              
+        └── reservation.js           
+        └── review.js             
+
 ```
 
 ## Local setup (XAMPP or Laragon)
@@ -128,7 +138,7 @@ Base URL: `http://localhost/restaurant-management/backend/api`
 | GET    | /contacts                    | admin    |                                |
 | GET    | /avis                        | public   |                                |
 | POST   | /avis                        | user     | `{ note (1-5), comment }`      |
-| GET / POST / PUT / DELETE | /messages, /reclamations, /order-items | see `routes/api.php` | |
+| GET / POST / PUT / DELETE | /messages, /order-items | see `routes/api.php` | |
 
 All authenticated requests must include:
 ```
